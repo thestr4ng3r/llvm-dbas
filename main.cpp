@@ -16,7 +16,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "llvm/IR/LLVMContext.h"
-#include "llvm/AsmParser/Parser.h"
+#include "AsmParser/Parser.h"
 #include "llvm/Bitcode/ReaderWriter.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Verifier.h"
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	ProcessModule(M.get());
+	//ProcessModule(M.get());
 
 	if (DumpAsm) errs() << "Here's the assembly:\n" << *M.get();
 
