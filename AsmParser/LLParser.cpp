@@ -27,6 +27,7 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Operator.h"
 #include "llvm/IR/ValueSymbolTable.h"
+#include "llvm/IR/DebugInfo.h"
 #include "llvm/Support/Dwarf.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/SaveAndRestore.h"
@@ -43,9 +44,25 @@ static std::string getTypeString(Type *T) {
 
 LLParser::LLParser(StringRef F, SourceMgr &SM, SMDiagnostic &Err, Module *M, SlotMapping *Slots)
         : Context(M->getContext()), Lex(F, SM, Err, M->getContext()), M(M),
-          Slots(Slots), BlockAddressPFS(nullptr) {
+          Slots(Slots), BlockAddressPFS(nullptr),
+          DebugBuilder(*M) {
   // TODO: real filename and directory
-  DebugFile = DIFile::get(Context, "test.ll", "");
+
+  StringRef Filename = "test.ll";
+  StringRef Directory = "";
+
+  M->addModuleFlag(Module::Error, "Debug Info Version", DEBUG_METADATA_VERSION);
+  M->addModuleFlag(Module::Error, "Dwarf Version", 3);
+
+  DICompileUnit *DebugCU = DebugBuilder.createCompileUnit(dwarf::DW_LANG_lo_user,
+                                                          Filename,
+                                                          Directory,
+                                                          "llvm-irdbg",
+                                                          false,
+                                                          "",
+                                                          0);
+
+  DebugFile = DebugCU->getFile();
 }
 
 /// Run: module ::= toplevelentity*
@@ -414,8 +431,17 @@ bool LLParser::ParseDefine() {
   Lex.Lex();
 
   Function *F;
-  return ParseFunctionHeader(F, true) ||
-         ParseOptionalFunctionMetadata(*F) ||
+  if(ParseFunctionHeader(F, true))
+    return true;
+
+  DITypeRefArray a;
+  DISubroutineType *ST = DebugBuilder.createSubroutineType(a);
+  DebugSubprogram = DebugBuilder.createFunction(DebugFile, F->getName(), F->getName(), DebugFile, 0, ST, true, true, 0);
+  MDNode::deleteTemporary(cast<MDNode>(DebugSubprogram->getRawVariables()));
+  F->setMetadata(Metadata::DISubprogramKind, DebugSubprogram);
+
+
+  return ParseOptionalFunctionMetadata(*F) ||
          ParseFunctionBody(*F);
 }
 
@@ -732,7 +758,7 @@ bool LLParser::ParseAlias(const std::string &Name, LocTy NameLoc, unsigned L,
         return Error(NameLoc, "redefinition of global '@" + Name + "'");
     }
   } else {
-    auto I = ForwardRefValIDs.find(NumberedVals.size());
+    auto I = ForwardRefValIDs.find((const unsigned int)NumberedVals.size());
     if (I != ForwardRefValIDs.end()) {
       GVal = I->second.first;
       ForwardRefValIDs.erase(I);
@@ -2427,7 +2453,7 @@ bool LLParser::PerFunctionState::SetInstName(int NameID,
   if (NameStr.empty()) {
     // If neither a name nor an ID was specified, just use the next ID.
     if (NameID == -1)
-      NameID = NumberedVals.size();
+      NameID = (int)NumberedVals.size();
 
     if (unsigned(NameID) != NumberedVals.size())
       return P.Error(NameLoc, "instruction expected to be numbered '%" +
@@ -4886,9 +4912,8 @@ bool LLParser::ParseCmpPredicate(unsigned &P, unsigned Opc) {
 
 #include <iostream>
   void LLParser::AddInstructionDebugLineMetadata(Instruction *I, unsigned int Line) {
-  std::cout << "TODO: Add metadata to Instruction " << I->getOpcodeName() << " at line " << Line << std::endl;
-  //DILocation *DebugLocation = DILocation::get(Context, Line, 0, DebugFile);
-  //I->setMetadata(Metadata::DILocationKind, DebugLocation);
+  DILocation *DebugLocation = DILocation::get(Context, Line + 1, 0, DebugSubprogram);
+  I->setMetadata(Metadata::DILocationKind, DebugLocation);
 }
 
 
@@ -5141,7 +5166,7 @@ bool LLParser::ParseInvoke(Instruction *&Inst, PerFunctionState &PFS) {
   AttributeSet PAL = AttributeSet::get(Context, Attrs);
 
   InvokeInst *II =
-      InvokeInst::Create(Ty, Callee, NormalBB, UnwindBB, Args, BundleList);
+      InvokeInst::Create(Ty, Callee, NormalBB, UnwindBB, Args, (ArrayRef<llvm::OperandBundleDef>)BundleList);
   II->setCallingConv(CC);
   II->setAttributes(PAL);
   ForwardRefAttrGroups[II] = FwdRefAttrGrps;

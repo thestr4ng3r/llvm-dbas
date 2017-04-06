@@ -23,6 +23,7 @@
 #include "llvm/IR/Operator.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/ValueHandle.h"
+#include "llvm/IR/DIBuilder.h"
 #include <map>
 
 namespace llvm {
@@ -94,7 +95,9 @@ namespace llvm {
     SlotMapping *Slots;
 
     // Debug Information
+    DIBuilder DebugBuilder;
     DIFile *DebugFile;
+    DISubprogram *DebugSubprogram;
 
 
 

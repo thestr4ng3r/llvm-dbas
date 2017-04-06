@@ -28,9 +28,9 @@ if(NOT LLVM_ENABLE_RTTI)
 	add_definitions(-fno-rtti)
 endif()
 
-add_executable(llvm_dbinf ${SOURCE_FILES})
+add_executable(llvm-irdbg ${SOURCE_FILES})
 
-target_link_libraries(llvm_dbinf
+target_link_libraries(llvm-irdbg
 		#LLVMAsmParser
 		LLVMBitWriter
 		LLVMCore
