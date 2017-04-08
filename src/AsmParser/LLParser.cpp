@@ -4687,7 +4687,7 @@ bool LLParser::ParseBasicBlock(PerFunctionState &PFS) {
         return true;
     }
 
-    unsigned int InstLine = Lex.getCurrentLine();
+    unsigned int InstLine = Lex.getCurrentLine()+1;
 
     switch (ParseInstruction(Inst, BB, PFS)) {
     default: llvm_unreachable("Unknown ParseInstruction result!");

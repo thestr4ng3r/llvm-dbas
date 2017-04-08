@@ -26,17 +26,17 @@ Current executable set to './test_debug' (x86_64).
 (lldb) b main
 Breakpoint 1: where = test_debug`main + 4, address = 0x0000000000400504
 (lldb) r
-Process 23794 launched: './test_debug' (x86_64)
-Process 23794 stopped
+Process 2523 launched: './test_debug' (x86_64)
+Process 2523 stopped
 * thread #1, name = 'test_debug', stop reason = breakpoint 1.1
-    frame #0: 0x0000000000400504 test_debug`main at test.ll:12
-   9   	; Function Attrs: nounwind uwtable
+    frame #0: 0x0000000000400504 test_debug`main at test.ll:13
    10  	define i32 @main() #0 {
    11  	  %1 = alloca i32, align 4
--> 12  	  %a = alloca i32, align 4
-   13  	  store i32 0, i32* %1, align 4
+   12  	  %a = alloca i32, align 4
+-> 13  	  store i32 0, i32* %1, align 4
    14  	  store i32 42, i32* %a, align 4
    15  	  %2 = load i32, i32* %a, align 4
+   16  	  %3 = icmp slt i32 %2, 30
 ```
 
 ## Building

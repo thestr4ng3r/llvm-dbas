@@ -37,3 +37,6 @@ target_link_libraries(llvm-dbas
 		LLVMBitWriter
 		LLVMCore
 		LLVMSupport)
+
+install(TARGETS llvm-dbas
+		DESTINATION bin)

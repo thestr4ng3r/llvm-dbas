@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 	PrettyStackTraceProgram X(argc, argv);
 	LLVMContext &Context = getGlobalContext();
 	llvm_shutdown_obj Y;  // Call llvm_shutdown() on exit.
-	cl::ParseCommandLineOptions(argc, argv, "llvm .ll -> .bc assembler adding debug information on IR level\n");
+	cl::ParseCommandLineOptions(argc, argv, "llvm .ll -> .bc assembler adding debug information at IR level\n");
 
 	// Parse the file now...
 	SMDiagnostic Err;
