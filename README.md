@@ -1,4 +1,6 @@
 # llvm-dbas
+[![Build Status](https://travis-ci.org/thestr4ng3r/llvm-dbas.svg?branch=master)](https://travis-ci.org/thestr4ng3r/llvm-dbas)
+
 llvm-dbas is an LLVM Assembler adding Debug Information at IR Level. 
 This version is based on **LLVM 3.8**.
 
@@ -82,3 +84,9 @@ Changes include:
 * LLLexer keeps track of the current line number.
 * LLDebugInfo is a class which is responsible for creating and attaching the Debug Information.
 * LLParser uses LLDebugInfo while parsing the code.
+
+## About
+Created by Florian Märkl: https://www.metallic.software
+
+This project is distributed under the University of Illinois Open Source License.
+See [LICENSE.TXT](LICENSE.TXT) for details.
