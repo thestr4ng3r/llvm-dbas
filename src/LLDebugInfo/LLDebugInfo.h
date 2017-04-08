@@ -12,8 +12,8 @@
 #ifndef LLVM_DBAS_LLDEBUGINFO_LLDEBUGINFO_H
 #define LLVM_DBAS_LLDEBUGINFO_LLDEBUGINFO_H
 
-#include "llvm/IR/Module.h"
-#include "llvm/IR/DIBuilder.h"
+#include <llvm/IR/Module.h>
+#include <llvm/IR/DIBuilder.h>
 
 namespace llvm {
   class LLDebugInfo

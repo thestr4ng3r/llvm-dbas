@@ -10,17 +10,17 @@
 //===----------------------------------------------------------------------===//
 
 #include "LLLexer.h"
-#include "llvm/ADT/StringExtras.h"
-#include "llvm/ADT/Twine.h"
-#include "llvm/AsmParser/Parser.h"
-#include "llvm/IR/DerivedTypes.h"
-#include "llvm/IR/Instruction.h"
-#include "llvm/IR/LLVMContext.h"
-#include "llvm/Support/ErrorHandling.h"
-#include "llvm/Support/MathExtras.h"
-#include "llvm/Support/MemoryBuffer.h"
-#include "llvm/Support/SourceMgr.h"
-#include "llvm/Support/raw_ostream.h"
+#include <llvm/ADT/StringExtras.h>
+#include <llvm/ADT/Twine.h>
+#include <llvm/AsmParser/Parser.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Instruction.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/Support/ErrorHandling.h>
+#include <llvm/Support/MathExtras.h>
+#include <llvm/Support/MemoryBuffer.h>
+#include <llvm/Support/SourceMgr.h>
+#include <llvm/Support/raw_ostream.h>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>

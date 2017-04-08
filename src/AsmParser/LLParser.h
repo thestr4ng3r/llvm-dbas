@@ -14,14 +14,14 @@
 
 #include "LLLexer.h"
 #include "LLDebugInfo/LLDebugInfo.h"
-#include "llvm/ADT/DenseMap.h"
-#include "llvm/ADT/StringMap.h"
-#include "llvm/IR/Attributes.h"
-#include "llvm/IR/Instructions.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IR/Operator.h"
-#include "llvm/IR/Type.h"
-#include "llvm/IR/ValueHandle.h"
+#include <llvm/ADT/DenseMap.h>
+#include <llvm/ADT/StringMap.h>
+#include <llvm/IR/Attributes.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Operator.h>
+#include <llvm/IR/Type.h>
+#include <llvm/IR/ValueHandle.h>
 #include <map>
 
 namespace llvm {

@@ -11,9 +11,9 @@
 
 #include "Parser.h"
 #include "LLParser.h"
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/Support/Path.h"
-#include "llvm/Support/FileSystem.h"
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/Path.h>
+#include <llvm/Support/FileSystem.h>
 using namespace llvm;
 
 bool llvm::parseAssemblyInto(StringRef File, MemoryBufferRef F, Module &M, SMDiagnostic &Err,
