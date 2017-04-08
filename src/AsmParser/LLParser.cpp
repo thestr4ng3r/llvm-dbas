@@ -42,27 +42,12 @@ static std::string getTypeString(Type *T) {
 }
 
 
-LLParser::LLParser(StringRef F, SourceMgr &SM, SMDiagnostic &Err, Module *M, SlotMapping *Slots)
+
+LLParser::LLParser(StringRef File, StringRef Directory,
+                   StringRef F, SourceMgr &SM, SMDiagnostic &Err, Module *M, SlotMapping *Slots)
         : Context(M->getContext()), Lex(F, SM, Err, M->getContext()), M(M),
           Slots(Slots), BlockAddressPFS(nullptr),
-          DebugBuilder(*M) {
-  // TODO: real filename and directory
-
-  StringRef Filename = "test.ll";
-  StringRef Directory = "";
-
-  M->addModuleFlag(Module::Error, "Debug Info Version", DEBUG_METADATA_VERSION);
-  M->addModuleFlag(Module::Error, "Dwarf Version", 3);
-
-  DICompileUnit *DebugCU = DebugBuilder.createCompileUnit(dwarf::DW_LANG_lo_user,
-                                                          Filename,
-                                                          Directory,
-                                                          "llvm-irdbg",
-                                                          false,
-                                                          "",
-                                                          0);
-
-  DebugFile = DebugCU->getFile();
+          DebugInfo(M, File, Directory) {
 }
 
 /// Run: module ::= toplevelentity*
@@ -70,8 +55,12 @@ bool LLParser::Run() {
   // Prime the lexer.
   Lex.Lex();
 
-  return ParseTopLevelEntities() ||
-         ValidateEndOfModule();
+  if(ParseTopLevelEntities())
+    return true;
+
+  DebugInfo.finalize();
+
+  return ValidateEndOfModule();
 }
 
 bool LLParser::parseStandaloneConstantValue(Constant *&C,
@@ -434,12 +423,7 @@ bool LLParser::ParseDefine() {
   if(ParseFunctionHeader(F, true))
     return true;
 
-  DITypeRefArray a;
-  DISubroutineType *ST = DebugBuilder.createSubroutineType(a);
-  DebugSubprogram = DebugBuilder.createFunction(DebugFile, F->getName(), F->getName(), DebugFile, 0, ST, true, true, 0);
-  MDNode::deleteTemporary(cast<MDNode>(DebugSubprogram->getRawVariables()));
-  F->setMetadata(Metadata::DISubprogramKind, DebugSubprogram);
-
+  DebugInfo.addFunction(F);
 
   return ParseOptionalFunctionMetadata(*F) ||
          ParseFunctionBody(*F);
@@ -4711,7 +4695,7 @@ bool LLParser::ParseBasicBlock(PerFunctionState &PFS) {
     default: llvm_unreachable("Unknown ParseInstruction result!");
     case InstError: return true;
     case InstNormal:
-      AddInstructionDebugLineMetadata(Inst, InstLine);
+      DebugInfo.addInstruction(Inst, InstLine);
       BB->getInstList().push_back(Inst);
 
       // With a normal result, we check to see if the instruction is followed by
@@ -4721,7 +4705,7 @@ bool LLParser::ParseBasicBlock(PerFunctionState &PFS) {
           return true;
       break;
     case InstExtraComma:
-      AddInstructionDebugLineMetadata(Inst, InstLine);
+      DebugInfo.addInstruction(Inst, InstLine);
       BB->getInstList().push_back(Inst);
 
       // If the instruction parser ate an extra comma at the end of it, it
@@ -4905,16 +4889,6 @@ bool LLParser::ParseCmpPredicate(unsigned &P, unsigned Opc) {
   return false;
 }
 
-
-//===----------------------------------------------------------------------===//
-// Debug Line Metadata.
-//===----------------------------------------------------------------------===//
-
-#include <iostream>
-  void LLParser::AddInstructionDebugLineMetadata(Instruction *I, unsigned int Line) {
-  DILocation *DebugLocation = DILocation::get(Context, Line + 1, 0, DebugSubprogram);
-  I->setMetadata(Metadata::DILocationKind, DebugLocation);
-}
 
 
 //===----------------------------------------------------------------------===//

@@ -15,6 +15,7 @@
 #define LLVM_IRDBG_ASMPARSER_LLPARSER_H
 
 #include "LLLexer.h"
+#include "LLDebugInfo/LLDebugInfo.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/StringMap.h"
 #include "llvm/IR/Attributes.h"
@@ -23,7 +24,6 @@
 #include "llvm/IR/Operator.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/ValueHandle.h"
-#include "llvm/IR/DIBuilder.h"
 #include <map>
 
 namespace llvm {
@@ -94,10 +94,7 @@ namespace llvm {
     Module *M;
     SlotMapping *Slots;
 
-    // Debug Information
-    DIBuilder DebugBuilder;
-    DIFile *DebugFile;
-    DISubprogram *DebugSubprogram;
+    LLDebugInfo DebugInfo;
 
 
 
@@ -148,7 +145,8 @@ namespace llvm {
     std::map<unsigned, AttrBuilder> NumberedAttrBuilders;
 
   public:
-    LLParser(StringRef F, SourceMgr &SM, SMDiagnostic &Err, Module *M,
+    LLParser(StringRef File, StringRef Directory,
+             StringRef F, SourceMgr &SM, SMDiagnostic &Err, Module *M,
              SlotMapping *Slots = nullptr);
     bool Run();
 
@@ -502,9 +500,6 @@ namespace llvm {
     bool ParseUseListOrderBB();
     bool ParseUseListOrderIndexes(SmallVectorImpl<unsigned> &Indexes);
     bool sortUseListOrder(Value *V, ArrayRef<unsigned> Indexes, SMLoc Loc);
-
-
-	void AddInstructionDebugLineMetadata(Instruction *I, unsigned int Line);
   };
 } // End llvm namespace
 

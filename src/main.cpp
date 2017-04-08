@@ -30,8 +30,6 @@
 #include "llvm/Support/ToolOutputFile.h"
 #include <memory>
 
-#include "ir-dbg.h"
-
 using namespace llvm;
 
 static cl::opt<std::string> InputFilename(cl::Positional, cl::desc("<input .llvm file>"), cl::init("-"));

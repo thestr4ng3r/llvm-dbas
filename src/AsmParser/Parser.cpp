@@ -28,7 +28,11 @@ bool llvm::parseAssemblyInto(MemoryBufferRef F, Module &M, SMDiagnostic &Err,
 	std::unique_ptr<MemoryBuffer> Buf = MemoryBuffer::getMemBuffer(F);
 	SM.AddNewSourceBuffer(std::move(Buf), SMLoc());
 
-	return LLParser(F.getBuffer(), SM, Err, &M, Slots).Run();
+	// TODO: real filename and directory
+	StringRef File = "test.ll";
+	StringRef Directory = "/home/florian/dev/llvm-dbinf/test";
+
+	return LLParser(File, Directory, F.getBuffer(), SM, Err, &M, Slots).Run();
 }
 
 std::unique_ptr<Module> llvm::parseAssembly(MemoryBufferRef F,
@@ -65,16 +69,4 @@ std::unique_ptr<Module> llvm::parseAssemblyString(StringRef AsmString,
 												  SlotMapping *Slots) {
 	MemoryBufferRef F(AsmString, "<string>");
 	return parseAssembly(F, Err, Context, Slots);
-}
-
-Constant *llvm::parseConstantValue(StringRef Asm, SMDiagnostic &Err,
-								   const Module &M, const SlotMapping *Slots) {
-	SourceMgr SM;
-	std::unique_ptr<MemoryBuffer> Buf = MemoryBuffer::getMemBuffer(Asm);
-	SM.AddNewSourceBuffer(std::move(Buf), SMLoc());
-	Constant *C;
-	if (LLParser(Asm, SM, Err, const_cast<Module *>(&M))
-			.parseStandaloneConstantValue(C, Slots))
-		return nullptr;
-	return C;
 }
