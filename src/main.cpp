@@ -1,6 +1,4 @@
-//===--- llvm-as.cpp - The low-level LLVM assembler -----------------------===//
-//
-//                     The LLVM Compiler Infrastructure
+//===--- llvm-dbas - The low-level LLVM assembler adding debug info -------===//
 //
 // This file is distributed under the University of Illinois Open Source
 // License. See LICENSE.TXT for details.
@@ -8,10 +6,10 @@
 //===----------------------------------------------------------------------===//
 //
 //  This utility may be invoked in the following manner:
-//   llvm-as --help         - Output information about command line switches
-//   llvm-as [options]      - Read LLVM asm from stdin, write bitcode to stdout
-//   llvm-as [options] x.ll - Read LLVM asm from the x.ll file, write bitcode
-//                            to the x.bc file.
+//   llvm-dbas --help         - Output information about command line switches
+//   llvm-dbas [options]      - Read LLVM asm from stdin, write bitcode to stdout
+//   llvm-dbas [options] x.ll - Read LLVM asm from the x.ll file, write bitcode
+//                              to the x.bc file.
 //
 //===----------------------------------------------------------------------===//
 
@@ -32,7 +30,7 @@
 
 using namespace llvm;
 
-static cl::opt<std::string> InputFilename(cl::Positional, cl::desc("<input .llvm file>"), cl::init("-"));
+static cl::opt<std::string> InputFilename(cl::Positional, cl::desc("<input .ll file>"), cl::init("-"));
 
 static cl::opt<std::string> OutputFilename("o", cl::desc("Override output filename"), cl::value_desc("filename"));
 
@@ -87,7 +85,7 @@ int main(int argc, char **argv)
 	PrettyStackTraceProgram X(argc, argv);
 	LLVMContext &Context = getGlobalContext();
 	llvm_shutdown_obj Y;  // Call llvm_shutdown() on exit.
-	cl::ParseCommandLineOptions(argc, argv, "llvm .ll -> .bc assembler\n");
+	cl::ParseCommandLineOptions(argc, argv, "llvm .ll -> .bc assembler adding debug information on IR level\n");
 
 	// Parse the file now...
 	SMDiagnostic Err;
