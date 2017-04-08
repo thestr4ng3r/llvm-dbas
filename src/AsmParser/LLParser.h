@@ -317,14 +317,17 @@ namespace llvm {
       std::map<unsigned, std::pair<Value*, LocTy> > ForwardRefValIDs;
       std::vector<Value*> NumberedVals;
 
+      DISubprogram *DebugSubprogram;
+
       /// FunctionNumber - If this is an unnamed function, this is the slot
       /// number of it, otherwise it is -1.
       int FunctionNumber;
     public:
-      PerFunctionState(LLParser &p, Function &f, int FunctionNumber);
+      PerFunctionState(LLParser &p, Function &f, int FunctionNumber, DISubprogram *DebugSubprogram);
       ~PerFunctionState();
 
       Function &getFunction() const { return F; }
+      DISubprogram *getDebugSubprogram() const { return DebugSubprogram; };
 
       bool FinishFunction();
 
@@ -445,7 +448,7 @@ namespace llvm {
     };
     bool ParseArgumentList(SmallVectorImpl<ArgInfo> &ArgList, bool &isVarArg);
     bool ParseFunctionHeader(Function *&Fn, bool isDefine);
-    bool ParseFunctionBody(Function &Fn);
+    bool ParseFunctionBody(Function &Fn, DISubprogram *SP);
     bool ParseBasicBlock(PerFunctionState &PFS);
 
     enum TailCallType { TCT_None, TCT_Tail, TCT_MustTail };

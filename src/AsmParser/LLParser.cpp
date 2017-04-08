@@ -421,10 +421,10 @@ bool LLParser::ParseDefine() {
   if(ParseFunctionHeader(F, true))
     return true;
 
-  DebugInfo.addFunction(F);
+  DISubprogram *SP = DebugInfo.addFunction(F);
 
   return ParseOptionalFunctionMetadata(*F) ||
-         ParseFunctionBody(*F);
+         ParseFunctionBody(*F, SP);
 }
 
 /// ParseGlobalType
@@ -2291,8 +2291,8 @@ bool LLParser::ParseArrayVectorType(Type *&Result, bool isVector) {
 //===----------------------------------------------------------------------===//
 
 LLParser::PerFunctionState::PerFunctionState(LLParser &p, Function &f,
-                                             int functionNumber)
-  : P(p), F(f), FunctionNumber(functionNumber) {
+                                             int functionNumber, DISubprogram *DebugSubprogram)
+  : P(p), F(f), FunctionNumber(functionNumber), DebugSubprogram(DebugSubprogram) {
 
   // Insert unnamed arguments into the NumberedVals list.
   for (Argument &A : F.args())
@@ -4613,7 +4613,7 @@ bool LLParser::PerFunctionState::resolveForwardRefBlockAddresses() {
 
 /// ParseFunctionBody
 ///   ::= '{' BasicBlock+ UseListOrderDirective* '}'
-bool LLParser::ParseFunctionBody(Function &Fn) {
+bool LLParser::ParseFunctionBody(Function &Fn, DISubprogram *SP) {
   if (Lex.getKind() != lltok::lbrace)
     return TokError("expected '{' in function body");
   Lex.Lex();  // eat the {.
@@ -4621,7 +4621,7 @@ bool LLParser::ParseFunctionBody(Function &Fn) {
   int FunctionNumber = -1;
   if (!Fn.hasName()) FunctionNumber = NumberedVals.size()-1;
 
-  PerFunctionState PFS(*this, Fn, FunctionNumber);
+  PerFunctionState PFS(*this, Fn, FunctionNumber, SP);
 
   // Resolve block addresses and allow basic blocks to be forward-declared
   // within this function.
@@ -4693,7 +4693,7 @@ bool LLParser::ParseBasicBlock(PerFunctionState &PFS) {
     default: llvm_unreachable("Unknown ParseInstruction result!");
     case InstError: return true;
     case InstNormal:
-      DebugInfo.addInstruction(Inst, InstLine);
+      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), InstLine);
       BB->getInstList().push_back(Inst);
 
       // With a normal result, we check to see if the instruction is followed by
@@ -4703,7 +4703,7 @@ bool LLParser::ParseBasicBlock(PerFunctionState &PFS) {
           return true;
       break;
     case InstExtraComma:
-      DebugInfo.addInstruction(Inst, InstLine);
+      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), InstLine);
       BB->getInstList().push_back(Inst);
 
       // If the instruction parser ate an extra comma at the end of it, it

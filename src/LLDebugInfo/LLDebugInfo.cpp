@@ -18,26 +18,27 @@ LLDebugInfo::LLDebugInfo(llvm::Module *M, StringRef Filename, StringRef Director
   M->addModuleFlag(Module::Error, "Dwarf Version", 4);
 
   CU = DIB.createCompileUnit(dwarf::DW_LANG_lo_user,
-                                           Filename,
-                                           Directory,
-                                           "llvm-dbas",
-                                           false,
-                                           "",
-                                           0);
+                             Filename,
+                             Directory,
+                             "llvm-dbas",
+                             false,
+                             "",
+                             0);
 
   File = CU->getFile();
 }
 
-void LLDebugInfo::addFunction(Function *F) {
+DISubprogram *LLDebugInfo::addFunction(Function *F) {
   DITypeRefArray a;
   DISubroutineType *ST = DIB.createSubroutineType(a);
-  Subprogram = DIB.createFunction(File, F->getName(), F->getName(), File, 0, ST, true, true, 0);
-  F->setMetadata("dbg", Subprogram);
+  DISubprogram *SP = DIB.createFunction(File, F->getName(), F->getName(), File, 0, ST, true, true, 0);
+  F->setSubprogram(SP);
+  return SP;
 }
 
-void LLDebugInfo::addInstruction(Instruction *I, unsigned int Line) {
-  DILocation *DebugLocation = DILocation::get(M->getContext(), Line + 1, 0, Subprogram);
-  I->setMetadata("dbg", DebugLocation);
+void LLDebugInfo::addInstruction(Instruction *I, DISubprogram *SP, unsigned int Line) {
+  DebugLoc loc = DebugLoc::get(Line, 0, SP);
+  I->setDebugLoc(loc);
 }
 
 void LLDebugInfo::finalize() {

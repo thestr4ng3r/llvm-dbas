@@ -25,14 +25,11 @@ namespace llvm {
     DICompileUnit *CU;
     DIFile *File;
 
-    // TODO: do not save this as a member
-    DISubprogram *Subprogram;
-
   public:
     LLDebugInfo(llvm::Module *M, StringRef File, StringRef Directory);
 
-    void addFunction(Function *F);
-    void addInstruction(Instruction *I, unsigned int line);
+    DISubprogram *addFunction(Function *F);
+    void addInstruction(Instruction *I, DISubprogram *SP, unsigned int line);
     void finalize();
   };
 }
