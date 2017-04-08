@@ -18,31 +18,36 @@
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/Path.h"
+#include "llvm/Support/FileSystem.h"
 #include <cstring>
 #include <system_error>
 using namespace llvm;
 
-bool llvm::parseAssemblyInto(MemoryBufferRef F, Module &M, SMDiagnostic &Err,
+bool llvm::parseAssemblyInto(StringRef File, MemoryBufferRef F, Module &M, SMDiagnostic &Err,
 							 SlotMapping *Slots) {
 	SourceMgr SM;
 	std::unique_ptr<MemoryBuffer> Buf = MemoryBuffer::getMemBuffer(F);
 	SM.AddNewSourceBuffer(std::move(Buf), SMLoc());
 
-	// TODO: real filename and directory
-	StringRef File = "test.ll";
-	StringRef Directory = "/home/florian/dev/llvm-dbinf/test";
+  SmallString<256> FileV(File);
+  sys::fs::make_absolute(FileV);
+  sys::path::remove_filename(FileV);
 
-	return LLParser(File, Directory, F.getBuffer(), SM, Err, &M, Slots).Run();
+  StringRef Filename = sys::path::filename(File);
+  StringRef Directory = Twine(FileV).getSingleStringRef();
+
+	return LLParser(Filename, Directory, F.getBuffer(), SM, Err, &M, Slots).Run();
 }
 
-std::unique_ptr<Module> llvm::parseAssembly(MemoryBufferRef F,
+std::unique_ptr<Module> llvm::parseAssembly(StringRef File, MemoryBufferRef F,
 											SMDiagnostic &Err,
 											LLVMContext &Context,
 											SlotMapping *Slots) {
 	std::unique_ptr<Module> M =
 			make_unique<Module>(F.getBufferIdentifier(), Context);
 
-	if (parseAssemblyInto(F, *M, Err, Slots))
+	if (parseAssemblyInto(File, F, *M, Err, Slots))
 		return nullptr;
 
 	return M;
@@ -60,13 +65,5 @@ std::unique_ptr<Module> llvm::parseAssemblyFile(StringRef Filename,
 		return nullptr;
 	}
 
-	return parseAssembly(FileOrErr.get()->getMemBufferRef(), Err, Context, Slots);
-}
-
-std::unique_ptr<Module> llvm::parseAssemblyString(StringRef AsmString,
-												  SMDiagnostic &Err,
-												  LLVMContext &Context,
-												  SlotMapping *Slots) {
-	MemoryBufferRef F(AsmString, "<string>");
-	return parseAssembly(F, Err, Context, Slots);
+	return parseAssembly(Filename, FileOrErr.get()->getMemBufferRef(), Err, Context, Slots);
 }

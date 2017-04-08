@@ -40,29 +40,13 @@ namespace llvm {
 											  LLVMContext &Context,
 											  SlotMapping *Slots = nullptr);
 
-/// The function is a secondary interface to the LLVM Assembly Parser. It parses
-/// an ASCII string that (presumably) contains LLVM Assembly code. It returns a
-/// Module (intermediate representation) with the corresponding features. Note
-/// that this does not verify that the generated Module is valid, so you should
-/// run the verifier after parsing the file to check that it is okay.
-/// \brief Parse LLVM Assembly from a string
-/// \param AsmString The string containing assembly
-/// \param Error Error result info.
-/// \param Context Context in which to allocate globals info.
-/// \param Slots The optional slot mapping that will be initialized during
-///              parsing.
-	std::unique_ptr<Module> parseAssemblyString(StringRef AsmString,
-												SMDiagnostic &Error,
-												LLVMContext &Context,
-												SlotMapping *Slots = nullptr);
-
 /// parseAssemblyFile and parseAssemblyString are wrappers around this function.
 /// \brief Parse LLVM Assembly from a MemoryBuffer.
 /// \param F The MemoryBuffer containing assembly
 /// \param Err Error result info.
 /// \param Slots The optional slot mapping that will be initialized during
 ///              parsing.
-	std::unique_ptr<Module> parseAssembly(MemoryBufferRef F, SMDiagnostic &Err,
+	std::unique_ptr<Module> parseAssembly(StringRef File, MemoryBufferRef F, SMDiagnostic &Err,
 										  LLVMContext &Context,
 										  SlotMapping *Slots = nullptr);
 
@@ -77,7 +61,7 @@ namespace llvm {
 /// \param Slots The optional slot mapping that will be initialized during
 ///              parsing.
 /// \return true on error.
-	bool parseAssemblyInto(MemoryBufferRef F, Module &M, SMDiagnostic &Err,
+	bool parseAssemblyInto(StringRef File, MemoryBufferRef F, Module &M, SMDiagnostic &Err,
 						   SlotMapping *Slots = nullptr);
 
 
