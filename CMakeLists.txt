@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(llvm-irdbg)
+project(llvm-dbas)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -32,10 +32,9 @@ if(NOT LLVM_ENABLE_RTTI)
 	add_definitions(-fno-rtti)
 endif()
 
-add_executable(llvm-irdbg ${SOURCE_FILES})
+add_executable(llvm-dbas ${SOURCE_FILES})
 
-target_link_libraries(llvm-irdbg
-		#LLVMAsmParser
+target_link_libraries(llvm-dbas
 		LLVMBitWriter
 		LLVMCore
 		LLVMSupport)

@@ -1,7 +1,5 @@
 //===- LLToken.h - Token Codes for LLVM Assembly Files ----------*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
 // This file is distributed under the University of Illinois Open Source
 // License. See LICENSE.TXT for details.
 //
@@ -11,8 +9,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef LLVM_IRDBG_ASMPARSER_LLTOKEN_H
-#define LLVM_IRDBG_ASMPARSER_LLTOKEN_H
+#ifndef LLVM_DBAS_ASMPARSER_LLTOKEN_H
+#define LLVM_DBAS_ASMPARSER_LLTOKEN_H
 
 namespace llvm {
 namespace lltok {

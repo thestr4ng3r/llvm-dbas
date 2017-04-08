@@ -1,9 +1,16 @@
+//===-- LLDebugInfo.h - Debug Info Builder for LLParser ----------*- C++ -*-===//
 //
-// Created by florian on 08.04.17.
+// This file is distributed under the University of Illinois Open Source
+// License. See LICENSE.TXT for details.
 //
+//===----------------------------------------------------------------------===//
+//
+// These classes are implemented in LLDebugInfo/LLDebugInfo.cpp.
+//
+//===----------------------------------------------------------------------===//
 
-#ifndef LLVM_IRDBG_LLDEBUGINFO_H
-#define LLVM_IRDBG_LLDEBUGINFO_H
+#ifndef LLVM_DBAS_LLDEBUGINFO_LLDEBUGINFO_H
+#define LLVM_DBAS_LLDEBUGINFO_LLDEBUGINFO_H
 
 #include "llvm/IR/Module.h"
 #include "llvm/IR/DIBuilder.h"

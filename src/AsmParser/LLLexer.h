@@ -1,7 +1,5 @@
 //===- LLLexer.h - Lexer for LLVM Assembly Files ----------------*- C++ -*-===//
 //
-//                     The LLVM Compiler Infrastructure
-//
 // This file is distributed under the University of Illinois Open Source
 // License. See LICENSE.TXT for details.
 //
@@ -11,8 +9,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef LLVM_IRDBG_ASMPARSER_LLLEXER_H
-#define LLVM_IRDBG_ASMPARSER_LLLEXER_H
+#ifndef LLVM_DBAS_ASMPARSER_LLLEXER_H
+#define LLVM_DBAS_ASMPARSER_LLLEXER_H
 
 #include "LLToken.h"
 #include "llvm/ADT/APFloat.h"

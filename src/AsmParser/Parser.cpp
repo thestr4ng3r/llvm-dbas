@@ -1,27 +1,19 @@
 //===- Parser.cpp - Main dispatch module for the Parser library -----------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
 // This file is distributed under the University of Illinois Open Source
 // License. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
 //
-// This library implements the functionality defined in llvm/AsmParser/Parser.h
+// This file implements the functionality defined in AsmParser/Parser.h
 //
 //===----------------------------------------------------------------------===//
 
 #include "Parser.h"
 #include "LLParser.h"
-#include "llvm/ADT/STLExtras.h"
-#include "llvm/IR/Module.h"
-#include "llvm/Support/MemoryBuffer.h"
-#include "llvm/Support/SourceMgr.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/Path.h"
 #include "llvm/Support/FileSystem.h"
-#include <cstring>
-#include <system_error>
 using namespace llvm;
 
 bool llvm::parseAssemblyInto(StringRef File, MemoryBufferRef F, Module &M, SMDiagnostic &Err,

@@ -1,6 +1,15 @@
+//===- LLDebugInfo.cpp - Debug Info Builder for LLParser -------------------===//
+//
+// This file is distributed under the University of Illinois Open Source
+// License. See LICENSE.TXT for details.
+//
+//===----------------------------------------------------------------------===//
+//
+// This file implements the functionality defined in LLDebugInfo/LLDebugInfo.h
+//
+//===----------------------------------------------------------------------===//
 
 #include "LLDebugInfo.h"
-
 using namespace llvm;
 
 LLDebugInfo::LLDebugInfo(llvm::Module *M, StringRef Filename, StringRef Directory)
@@ -11,7 +20,7 @@ LLDebugInfo::LLDebugInfo(llvm::Module *M, StringRef Filename, StringRef Director
   CU = DIB.createCompileUnit(dwarf::DW_LANG_lo_user,
                                            Filename,
                                            Directory,
-                                           "llvm-irdbg",
+                                           "llvm-dbas",
                                            false,
                                            "",
                                            0);
