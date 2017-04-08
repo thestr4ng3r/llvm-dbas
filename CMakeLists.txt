@@ -25,7 +25,6 @@ include_directories(${LLVM_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-#include_directories("${SRC_DIR}/AsmParser")
 include_directories("${SRC_DIR}")
 
 if(NOT LLVM_ENABLE_RTTI)
