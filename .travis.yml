@@ -1,0 +1,25 @@
+dist: trusty
+sudo: required
+language: cpp
+compiler:
+- gcc
+
+before_install:
+- sudo apt-get update -qq
+- sudo apt-get remove -y cmake
+- wget https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz -O /tmp/cmake-3.7.2-Linux-x86_64.tar.gz
+- sudo tar -xf /tmp/cmake-3.7.2-Linux-x86_64.tar.gz -C /tmp
+- sudo cp -RT /tmp/cmake-3.7.2-Linux-x86_64 /usr
+- sudo apt-get install llvm-3.8
+- sudo mkdir -p /usr/share/llvm/cmake
+- sudo ln -s /usr/share/llvm-3.8/cmake/LLVMExports.cmake /usr/share/llvm/cmake/LLVMExports.cmake
+- sudo ln -s /usr/share/llvm-3.8/cmake/LLVMConfig.cmake /usr/share/llvm/cmake/LLVMConfig.cmake
+- sudo ln -s /usr/share/llvm-3.8/cmake/LLVM-Config.cmake /usr/share/llvm/cmake/LLVM-Config.cmake
+
+script:
+- mkdir build
+- cd build
+- cmake
+  -DCMAKE_BUILD_TYPE=Release
+  ..
+- make -j4
