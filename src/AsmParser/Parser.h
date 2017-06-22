@@ -21,6 +21,7 @@ namespace llvm {
 	class Module;
 	struct SlotMapping;
 	class SMDiagnostic;
+	class Type;
 
 /// This function is the main interface to the LLVM Assembly Parser. It parses
 /// an ASCII file that (presumably) contains LLVM Assembly code. It returns a
