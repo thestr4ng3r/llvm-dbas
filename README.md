@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/thestr4ng3r/llvm-dbas.svg?branch=master)](https://travis-ci.org/thestr4ng3r/llvm-dbas)
 
 llvm-dbas is an LLVM Assembler adding Debug Information at IR Level. 
-This version is based on **LLVM 3.8**.
+This version is based on **LLVM 4.0**. A version for LLVM 3.8 is available in a separate branch.
 
 When compiling LLVM IR code to machine code, there usually is afterwards no
 easy way to keep track of which native instructions resulted from which LLVM
@@ -40,7 +40,7 @@ Process 2523 stopped
 ```
 
 ## Building
-llvm-dbas uses CMake as its build system. It only depends on LLVM 3.8 and can be build like this:
+llvm-dbas uses CMake as its build system. It only depends on LLVM 4.0 and can be built like this:
 ```
 $ mkdir build && cd build
 $ cmake ..
@@ -50,7 +50,7 @@ $ make
 ## Usage
 llvm-dbas can be used exactly the same way as llvm-as:
 ```
-OVERVIEW: llvm .ll -> .bc assembler adding debug information on IR level
+OVERVIEW: llvm .ll -> .bc assembler adding debug information at IR level
 
 USAGE: llvm-dbas [options] <input .ll file>
 
@@ -61,10 +61,11 @@ General options:
   -disable-output                      - Disable output
   -f                                   - Enable binary output on terminals
   -filter-print-funcs=<function names> - Only print IR for functions whose name match this for all print-[before|after][-all] options
-  -function-summary                    - Emit function summary index
+  -module-hash                         - Emit module hash
   -o=<filename>                        - Override output filename
   -print-after-all                     - Print IR after each pass
   -print-before-all                    - Print IR before each pass
+  -reverse-iterate                     - 
   -rng-seed=<seed>                     - Seed for the random number generator
   -time-passes                         - Time each pass, printing elapsed time for each on exit
   -verify-debug-info                   - 
@@ -86,7 +87,8 @@ Changes include:
 * LLParser uses LLDebugInfo while parsing the code.
 
 ## About
-Created by Florian Märkl: https://www.metallic.software
+Created by Florian Märkl: https://www.metallic.software  
+LLVM 4.0 port by Stefan Gränitz [@weliveindetail](https://github.com/weliveindetail)
 
 This project is distributed under the University of Illinois Open Source License.
 See [LICENSE.TXT](LICENSE.TXT) for details.
