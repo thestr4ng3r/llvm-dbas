@@ -17,9 +17,9 @@ LLDebugInfo::LLDebugInfo(llvm::Module *M, StringRef Filename, StringRef Director
   M->addModuleFlag(Module::Error, "Debug Info Version", (uint32_t)DEBUG_METADATA_VERSION);
   M->addModuleFlag(Module::Error, "Dwarf Version", 4);
 
+  DIFile *DebugSrcFile = DIB.createFile(Filename, Directory);
   CU = DIB.createCompileUnit(dwarf::DW_LANG_lo_user,
-                             Filename,
-                             Directory,
+                             DebugSrcFile,
                              "llvm-dbas",
                              false,
                              "",

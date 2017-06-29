@@ -13,9 +13,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "llvm/IR/LLVMContext.h"
 #include "AsmParser/Parser.h"
-#include "llvm/Bitcode/ReaderWriter.h"
+#include "llvm/Bitcode/BitcodeWriter.h"
+#include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Verifier.h"
 #include "llvm/Support/CommandLine.h"
@@ -38,7 +38,7 @@ static cl::opt<bool> Force("f", cl::desc("Enable binary output on terminals"));
 
 static cl::opt<bool> DisableOutput("disable-output", cl::desc("Disable output"), cl::init(false));
 
-static cl::opt<bool> EmitFunctionSummary("function-summary", cl::desc("Emit function summary index"), cl::init(false));
+static cl::opt<bool> EmitModuleHash("module-hash", cl::desc("Emit module hash"), cl::init(false));
 
 static cl::opt<bool> DumpAsm("d", cl::desc("Print assembly as parsed"), cl::Hidden);
 
@@ -72,7 +72,8 @@ static void WriteOutputFile(const Module *M)
 	}
 
 	if (Force || !CheckBitcodeOutputToConsole(Out->os(), true))
-		WriteBitcodeToFile(M, Out->os(), PreserveBitcodeUseListOrder, EmitFunctionSummary);
+		WriteBitcodeToFile(M, Out->os(), PreserveBitcodeUseListOrder, nullptr,
+				           EmitModuleHash);
 
 	// Declare success.
 	Out->keep();
@@ -81,9 +82,9 @@ static void WriteOutputFile(const Module *M)
 int main(int argc, char **argv)
 {
 	// Print a stack trace if we signal out.
-	sys::PrintStackTraceOnErrorSignal();
+	sys::PrintStackTraceOnErrorSignal(argv[0]);
 	PrettyStackTraceProgram X(argc, argv);
-	LLVMContext &Context = getGlobalContext();
+	LLVMContext Context;
 	llvm_shutdown_obj Y;  // Call llvm_shutdown() on exit.
 	cl::ParseCommandLineOptions(argc, argv, "llvm .ll -> .bc assembler adding debug information at IR level\n");
 

@@ -1,39 +1,22 @@
 dist: trusty
-sudo: required
-language: cpp
-compiler:
-- gcc
+sudo: true
+language: c++
+compiler: clang
 
-before_install:
-- sudo apt-get update -qq
-- sudo apt-get remove -y cmake
-- wget https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz -O /tmp/cmake-3.7.2-Linux-x86_64.tar.gz
-- sudo tar -xf /tmp/cmake-3.7.2-Linux-x86_64.tar.gz -C /tmp
-- sudo cp -RT /tmp/cmake-3.7.2-Linux-x86_64 /usr
-
-install:
-- mkdir third_party
-- cd third_party
-- wget http://releases.llvm.org/3.8.1/llvm-3.8.1.src.tar.xz -O /tmp/llvm-3.8.1.src.tar.xz
-- tar -xf /tmp/llvm-3.8.1.src.tar.xz
-- cd llvm-3.8.1.src
-- mkdir build
-- cd build
-- cmake
-  -DCMAKE_BUILD_TYPE=Release
-  -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/third_party/llvm-38
-  -DLLVM_TARGETS_TO_BUILD=X86
-  -DLLVM_BUILD_TOOLS=OFF
-  ..
-- make -j4
-- make install
-- cd $TRAVIS_BUILD_DIR
+addons:
+  apt:
+    sources:
+    - llvm-toolchain-trusty-4.0
+    packages:
+    - cmake
+    - cmake-data
+    - llvm-4.0
+    - llvm-4.0-dev
 
 script:
-- mkdir build
-- cd build
-- cmake
-  -DCMAKE_BUILD_TYPE=Release
-  -DCMAKE_PREFIX_PATH=${TRAVIS_BUILD_DIR}/third_party/llvm-38
-  ..
-- make -j4
+    - rm -rf build
+    - mkdir build
+    - pushd build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_DIR="/usr/lib/llvm-4.0/lib/cmake/llvm/" ..
+    - cmake --build .
+    - popd
