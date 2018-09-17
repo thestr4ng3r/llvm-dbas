@@ -28,8 +28,9 @@ namespace llvm {
   public:
     LLDebugInfo(llvm::Module *M, StringRef File, StringRef Directory);
 
-    DISubprogram *addFunction(Function *F);
-    void addInstruction(Instruction *I, DISubprogram *SP, unsigned int line);
+    DISubprogram *addFunction(Function *F, unsigned int line);
+    DIType *addType(Type *Ty, llvm::Module *M);
+    void addInstruction(Instruction *I, DISubprogram *SP, std::string name, unsigned int line);
     void finalize();
   };
 }

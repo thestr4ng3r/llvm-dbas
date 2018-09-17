@@ -466,7 +466,7 @@ bool LLParser::ParseDefine() {
   if(ParseFunctionHeader(F, true))
     return true;
 
-  DISubprogram *SP = DebugInfo.addFunction(F);
+  DISubprogram *SP = DebugInfo.addFunction(F, Lex.getCurrentLine()+1);
 
   return ParseOptionalFunctionMetadata(*F) ||
          ParseFunctionBody(*F, SP);
@@ -4987,8 +4987,8 @@ bool LLParser::ParseBasicBlock(PerFunctionState &PFS) {
     default: llvm_unreachable("Unknown ParseInstruction result!");
     case InstError: return true;
     case InstNormal:
-      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), InstLine);
       BB->getInstList().push_back(Inst);
+      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), NameStr, InstLine);
 
       // With a normal result, we check to see if the instruction is followed by
       // a comma and metadata.
@@ -4997,8 +4997,8 @@ bool LLParser::ParseBasicBlock(PerFunctionState &PFS) {
           return true;
       break;
     case InstExtraComma:
-      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), InstLine);
       BB->getInstList().push_back(Inst);
+      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), NameStr, InstLine);
 
       // If the instruction parser ate an extra comma at the end of it, it
       // *must* be followed by metadata.
