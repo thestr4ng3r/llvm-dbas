@@ -100,7 +100,8 @@ DISubprogram *LLDebugInfo::addFunction(Function *F, unsigned int Line) {
   return SP;
 }
 
-void LLDebugInfo::addInstruction(Instruction *I, DISubprogram *SP, std::string name, unsigned int Line) {
+void LLDebugInfo::addInstruction(Instruction *I, DISubprogram *SP, std::string NameStr, int NameID, unsigned int Line) {
+  std::string name = NameStr.empty() ? std::to_string(NameID) : NameStr;
   DebugLoc loc = DebugLoc::get(Line, 0, SP);
   I->setDebugLoc(loc);
   if (!I->getType()->isVoidTy()) {
