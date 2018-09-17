@@ -75,8 +75,11 @@ DIType *LLDebugInfo::addType(Type *Ty, llvm::Module *Mod) {
       return DIB.createUnspecifiedType(StructTy->getName());
     }
     std::vector<Metadata *> argTypes;
+    int i = 0;
     for (Type *ArgType : StructTy->elements()) {
-      argTypes.push_back(addType(ArgType, Mod));
+      DIType *DeclTy = addType(ArgType, Mod);
+      argTypes.push_back(DIB.createMemberType(File, std::to_string(i), File, 0, layout.getTypeSizeInBits(ArgType), layout.getABITypeAlignment(ArgType), layout.getStructLayout(StructTy)->getElementOffsetInBits(i), DINode::FlagZero, DeclTy));
+      i++;
     }
     return DIB.createStructType(File, StructTy->hasName() ? StructTy->getName() : "", File, 0, layout.getTypeSizeInBits(Ty), layout.getABITypeAlignment(Ty), DINode::FlagZero, nullptr, DIB.getOrCreateArray(argTypes));
   }
