@@ -100,6 +100,16 @@ DISubprogram *LLDebugInfo::addFunction(Function *F, unsigned int Line) {
   return SP;
 }
 
+void LLDebugInfo::addParameters(Function *F, DISubprogram *SP, unsigned int Line) {
+  int i = 0;
+  for (Argument &arg : F->args()) {
+    DIType *Ty = addType(arg.getType(), M);
+    DILocalVariable *V = DIB.createParameterVariable(SP, arg.getName(), i++, File, Line, Ty);
+    DIB.insertDbgValueIntrinsic(&arg, 0, V, DIB.createExpression(), DebugLoc::get(Line, 0, SP).get(), F->getEntryBlock().getFirstNonPHI());
+  }
+
+}
+
 void LLDebugInfo::addInstruction(Instruction *I, DISubprogram *SP, std::string NameStr, int NameID, unsigned int Line) {
   std::string name = NameStr.empty() ? std::to_string(NameID) : NameStr;
   DebugLoc loc = DebugLoc::get(Line, 0, SP);

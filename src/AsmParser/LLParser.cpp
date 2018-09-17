@@ -466,10 +466,15 @@ bool LLParser::ParseDefine() {
   if(ParseFunctionHeader(F, true))
     return true;
 
-  DISubprogram *SP = DebugInfo.addFunction(F, Lex.getCurrentLine()+1);
+  unsigned int Line = Lex.getCurrentLine() + 1;
+  DISubprogram *SP = DebugInfo.addFunction(F, Line);
 
-  return ParseOptionalFunctionMetadata(*F) ||
+  bool result = ParseOptionalFunctionMetadata(*F) ||
          ParseFunctionBody(*F, SP);
+
+  DebugInfo.addParameters(F, SP, Line);
+
+  return result;
 }
 
 /// ParseGlobalType

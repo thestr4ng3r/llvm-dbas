@@ -31,6 +31,7 @@ namespace llvm {
     DISubprogram *addFunction(Function *F, unsigned int line);
     DIType *addType(Type *Ty, llvm::Module *M);
     void addInstruction(Instruction *I, DISubprogram *SP, std::string NameStr, int NameID, unsigned int line);
+    void addParameters(Function *F, DISubprogram *SP, unsigned int line);
     void finalize();
   };
 }
