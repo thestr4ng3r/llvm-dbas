@@ -4988,7 +4988,7 @@ bool LLParser::ParseBasicBlock(PerFunctionState &PFS) {
     case InstError: return true;
     case InstNormal:
       BB->getInstList().push_back(Inst);
-      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), NameStr, InstLine);
+      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), NameStr, NameID, InstLine);
 
       // With a normal result, we check to see if the instruction is followed by
       // a comma and metadata.
@@ -4998,7 +4998,7 @@ bool LLParser::ParseBasicBlock(PerFunctionState &PFS) {
       break;
     case InstExtraComma:
       BB->getInstList().push_back(Inst);
-      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), NameStr, InstLine);
+      DebugInfo.addInstruction(Inst, PFS.getDebugSubprogram(), NameStr, NameID, InstLine);
 
       // If the instruction parser ate an extra comma at the end of it, it
       // *must* be followed by metadata.
