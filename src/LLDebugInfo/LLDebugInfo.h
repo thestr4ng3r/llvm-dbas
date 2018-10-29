@@ -24,6 +24,7 @@ namespace llvm {
     DIBuilder DIB;
     DICompileUnit *CU;
     DIFile *File;
+    std::vector<llvm::Instruction *> DbgValues;
 
   public:
     LLDebugInfo(llvm::Module *M, StringRef File, StringRef Directory);
