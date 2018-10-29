@@ -12,6 +12,7 @@
 #include "LLDebugInfo.h"
 
 #include <llvm/Support/raw_ostream.h>
+#include <llvm/IR/Instructions.h>
 
 using namespace llvm;
 
@@ -117,10 +118,18 @@ void LLDebugInfo::addInstruction(Instruction *I, DISubprogram *SP, std::string N
   std::string name = NameStr.empty() ? std::to_string(NameID) : NameStr;
   DebugLoc loc = DebugLoc::get(Line, 0, SP);
   I->setDebugLoc(loc);
+  if (!isa<PHINode>(I) && !I->isEHPad()) {
+    for (auto i : DbgValues) {
+      i->insertBefore(I);
+    }
+    DbgValues.clear();
+  }
   if (!I->getType()->isVoidTy()) {
     DIType *Ty = addType(I->getType(), M);
     DILocalVariable *V = DIB.createAutoVariable(SP, name, File, Line, Ty);
-    DIB.insertDbgValueIntrinsic(I, 0, V, DIB.createExpression(), loc.get(), I->getParent());
+    auto inst = DIB.insertDbgValueIntrinsic(I, 0, V, DIB.createExpression(), loc.get(), I->getParent());
+    inst->removeFromParent();
+    DbgValues.push_back(inst);
   }
 }
 
